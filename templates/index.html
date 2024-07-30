@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Recommendation Chatbot</title>
+    <script>
+        async function getRecommendations() {
+            const features = {
+                Manufacturer: document.getElementById('manufacturer').value || null,
+                Model: document.getElementById('model').value || null,
+                Category: document.getElementById('category').value || null,
+                'Leather interior': document.getElementById('leather_interior').value || null,
+                'Fuel type': document.getElementById('fuel_type').value || null,
+                'Engine volume': document.getElementById('engine_volume').value || null,
+                Mileage: document.getElementById('mileage').value || null,
+                'Gear box type': document.getElementById('gear_box_type').value || null,
+                'Drive wheels': document.getElementById('drive_wheels').value || null,
+                Color: document.getElementById('color').value || null,
+                Price: document.getElementById('price').value || null
+            };
+
+            const response = await fetch('/recommend_by_features', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(features)
+            });
+
+            const data = await response.json();
+
+            let result = '';
+            if (data.error) {
+                result = data.error;
+            } else {
+                result = '<h2>Recommended Cars:</h2><ul>';
+                data.forEach(car => {
+                    result += `<li>ID: ${car.ID}, Manufacturer: ${car.Manufacturer}, Model: ${car.Model}, Price: ${car.Price}, Mileage: ${car.Mileage}</li>`;
+                });
+                result += '</ul>';
+            }
+
+            document.getElementById('recommendations').innerHTML = result;
+        }
+    </script>
+</head>
+<body>
+<h1>Car Recommendation Chatbot</h1>
+<form onsubmit="event.preventDefault(); getRecommendations();">
+    <label for="manufacturer">Manufacturer:</label>
+    <input type="text" id="manufacturer" name="manufacturer"><br>
+
+    <label for="model">Model:</label>
+    <input type="text" id="model" name="model"><br>
+
+    <label for="category">Category:</label>
+    <input type="text" id="category" name="category"><br>
+
+    <label for="leather_interior">Leather interior:</label>
+    <input type="text" id="leather_interior" name="leather_interior"><br>
+
+    <label for="fuel_type">Fuel type:</label>
+    <input type="text" id="fuel_type" name="fuel_type"><br>
+
+    <label for="engine_volume">Engine volume:</label>
+    <input type="text" id="engine_volume" name="engine_volume"><br>
+
+    <label for="mileage">Mileage:</label>
+    <input type="number" id="mileage" name="mileage"><br>
+
+    <label for="gear_box_type">Gear box type:</label>
+    <input type="text" id="gear_box_type" name="gear_box_type"><br>
+
+    <label for="drive_wheels">Drive wheels:</label>
+    <input type="text" id="drive_wheels" name="drive_wheels"><br>
+
+    <label for="color">Color:</label>
+    <input type="text" id="color" name="color"><br>
+
+    <label for="price">Price:</label>
+    <input type="number" id="price" name="price"><br>
+
+    <button type="submit">Get Recommendations</button>
+</form>
+
+<div id="recommendations"></div>
+</body>
+</html>
